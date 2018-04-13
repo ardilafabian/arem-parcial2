@@ -11,17 +11,43 @@ package com.example;
  */
 import java.io.*; 
 import java.net.*; 
-public class URLReader { 
-  public static void main(String[] args) throws Exception { 
-      URL google = new URL("http://www.google.com/"); 
-      try (BufferedReader reader = new BufferedReader(
-          new InputStreamReader(google.openStream()))) { 
-            String inputLine = null; 
-            while ((inputLine = reader.readLine()) != null) { 
-                  System.out.println(inputLine); 
-             } 
-       } catch (IOException x) { 
-               System.err.println(x); 
-       } 
-    } 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+public class URLReader extends Thread{ 
+    
+    public static void main(String[] args){
+        for(int i=0;i<20;i++){
+            Thread hilo = new URLReader();
+            hilo.start();
+        }    
+    }
+    
+    @Override
+    public void run(){
+        try{
+            System.out.println("PATH = '/'");
+            response("/");
+            System.out.println("PATH = '/hello'");
+            response("/hello");            
+            System.out.println("PATH = '/db'");
+            response("/db");                        
+        } catch(MalformedURLException e){
+            Logger.getLogger(URLReader.class.getName()).log(Level.SEVERE, null, e);
+            
+        }
+    
+    }
+    
+    public void response(String tipo) throws MalformedURLException{
+        URL result = new URL("https://aremp.herokuapp.com"+tipo);
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(result.openStream()))) {
+            String inputLine = null;
+            while ((inputLine = reader.readLine()) != null) {
+                System.out.println(inputLine);
+            }
+        } catch (IOException x) {
+            System.err.println(x);
+        }            
+    }
 }
